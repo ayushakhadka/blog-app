@@ -9,6 +9,7 @@ import com.springboot.blog.repository.CommentRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.CommentService;
 import org.antlr.v4.runtime.misc.Pair;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,12 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    private final ModelMapper modelMapper;
+
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper modelMapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -113,23 +117,12 @@ public class CommentServiceImpl implements CommentService {
      * Convert entity to dto
      */
     private CommentDto mapToDto(Comment comment ){
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(comment.getId());
-        commentDto.setName(comment.getName());
-        commentDto.setEmail(comment.getEmail());
-        commentDto.setBody(comment.getBody());
-
-        return commentDto;
+        return modelMapper.map(comment, CommentDto.class);
     }
     /**
      * Convert dto to entity
      */
     private Comment mapToEntity(CommentDto commentDto){
-        Comment comment = new Comment();
-        comment.setId(commentDto.getId());
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
-        return comment;
+        return modelMapper.map(commentDto, Comment.class);
     }
 }
